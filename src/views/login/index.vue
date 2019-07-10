@@ -43,12 +43,12 @@ export default {
   },
   methods: {
     async handleLogin () {
-      if (this.user.mobile.trim().length) {
-        this.mobileMessage = ''
-      } else {
-        this.mobileMessage = '请输入手机号'
-        return
-      }
+      // if (this.user.mobile.trim().length) {
+      //   this.mobileMessage = ''
+      // } else {
+      //   this.mobileMessage = '请输入手机号'
+      //   return
+      // }
       try {
         const data = await login(this.user)
         console.log(data)
