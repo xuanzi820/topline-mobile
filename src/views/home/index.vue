@@ -1,10 +1,10 @@
 <template>
   <div class="home">
-    <van-nav-bar title="首页"/>
+    <van-nav-bar title="首页" fixed/>
     <!--
         activeChannelIndex 绑定当前激活的标签页，使用索引
        -->
-    <van-tabs v-model="activeChannelIndex">
+    <van-tabs class="channel-tabs" v-model="activeChannelIndex">
       <van-tab title="标签 1">
         <!--
           下拉刷新
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     onLoad () {
-      console.log('onload')
+      // console.log('onload')
       // 异步更新数据
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
@@ -72,7 +72,7 @@ export default {
       }, 1000)
     },
     onRefresh () {
-      console.log('onRefresh')
+      // console.log('onRefresh')
       setTimeout(() => {
         this.isLoading = false
       }, 500)
@@ -82,9 +82,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.box {
-  width: 375px;
-  height: 200px;
-  background-color: #f40;
+.channel-tabs {
+  margin-bottom: 100px;
+}
+// 深度作用选择器：https://vue-loader.vuejs.org/zh/guide/scoped-css.html#%E6%B7%B1%E5%BA%A6%E4%BD%9C%E7%94%A8%E9%80%89%E6%8B%A9%E5%99%A8
+.channel-tabs /deep/ .van-tabs__wrap{
+  position: fixed;
+  top: 92px
+}
+.channel-tabs /deep/ .van-tabs__content {
+  margin-top: 100px;
 }
 </style>
