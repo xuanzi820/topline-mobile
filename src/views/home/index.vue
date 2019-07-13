@@ -107,14 +107,24 @@ export default {
      * 上拉加载更多，push 数据
      */
     async onLoad () {
-      console.log('onload')
+      await this.$sleep(800)
       let data = []
       data = await this.loadArticles()
+
+      // 如果没有pre_timestamp 并且数组是空的，则意味着没有数据了
+      if (!data.pre_timestamp && !data.results.length) {
+        // 设置该频道数据已加载完成，组件会自动给出提示，并且不再onLoad
+        this.activeChannel.upPullFinished = true
+        // 取消loading
+        this.activeChannel.upPullLoading = false
+        // 代码不要往后继续执行了
+        return
+      }
       // pre_timestamp 下一页的页码
       // results 文章列表
       // console.log(data)
 
-      // 没有最新数据，那就加载上一次推荐数据
+      // 解决初始化的时候没有最新推荐数据的问题（没有最新数据，那就加载上一次推荐数据）
       if (data.pre_timestamp && !data.results.length) {
         this.activeChannel.timestamp = data.pre_timestamp
         // 加载下一页数据
@@ -129,19 +139,6 @@ export default {
       this.activeChannel.upPullLoading = false
 
       console.log(data)
-      // 异步更新数据
-      // setTimeout(() => {
-      //   for (let i = 0; i < 10; i++) {
-      //     this.list.push(this.list.length + 1)
-      //   }
-      //   // 加载状态结束
-      //   this.loading = false
-
-      //   // 数据全部加载完成
-      //   if (this.list.length >= 40) {
-      //     this.finished = true
-      //   }
-      // }, 1000)
     },
     /**
      * 下拉刷新，如果有新数据，则是重置列表数据
