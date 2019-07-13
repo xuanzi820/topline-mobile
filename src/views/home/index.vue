@@ -61,6 +61,9 @@ export default {
     this.loadChannels()
   },
   methods: {
+    /**
+     * 上拉加载更多，push 数据
+     */
     onLoad () {
       // console.log('onload')
       // 异步更新数据
@@ -77,6 +80,9 @@ export default {
         }
       }, 1000)
     },
+    /**
+     * 下拉刷新，如果有新数据，则是重置列表数据
+     */
     onRefresh () {
       // console.log('onRefresh')
       setTimeout(() => {
