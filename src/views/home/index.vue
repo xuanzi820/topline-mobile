@@ -5,6 +5,9 @@
         activeChannelIndex 绑定当前激活的标签页，使用索引
        -->
     <van-tabs class="channel-tabs" v-model="activeChannelIndex">
+      <div slot="nav-right" class="wap-nav" @click="isChannelShow = true">
+        <van-icon name="wap-nav" />
+      </div>
       <van-tab
         v-for="channelItem in channels"
         :key="channelItem.id"
@@ -45,22 +48,31 @@
         </van-pull-refresh>
       </van-tab>
     </van-tabs>
+    <!-- 频道管理组件 -->
+    <!--
+      v-model 实际上是：
+        v-bind:value="数据"
+        v-on:input="数据 = $event"
+     -->
+    <HomeChannel v-model="isChannelShow"/>
+    <!-- 频道管理组件 -->
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/channel'
 import { getArticles } from '@/api/article'
+import HomeChannel from './components/channel'
 export default {
   name: 'HomeIndex',
+  components: {
+    HomeChannel
+  },
   data () {
     return {
       activeChannelIndex: 0,
-      list: [],
-      loading: false,
-      finished: false,
-      isLoading: false,
-      channels: [] // 存储频道列表
+      channels: [], // 存储频道列表
+      isChannelShow: false
     }
   },
   computed: {
@@ -201,6 +213,7 @@ export default {
 <style lang="less" scoped>
 .channel-tabs {
   margin-bottom: 100px;
+  margin-right: 100px
 }
 // 深度作用选择器：https://vue-loader.vuejs.org/zh/guide/scoped-css.html#%E6%B7%B1%E5%BA%A6%E4%BD%9C%E7%94%A8%E9%80%89%E6%8B%A9%E5%99%A8
 .channel-tabs /deep/ .van-tabs__wrap{
@@ -209,5 +222,9 @@ export default {
 }
 .channel-tabs /deep/ .van-tabs__content {
   margin-top: 100px;
+}
+.channel-tabs /deep/ .wap-nav {
+  position: fixed;
+  right: 0;
 }
 </style>
