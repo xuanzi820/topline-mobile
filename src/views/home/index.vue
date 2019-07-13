@@ -26,15 +26,15 @@
               我们需要在 onLoad 中拿到本次加载的数据以后，将 loading 设置为 false
           -->
           <van-list
-            v-model="loading"
-            :finished="finished"
+            v-model="channelItem.upPullLoading"
+            :finished="channelItem.upPullFinished"
             finished-text="没有更多了"
             @load="onLoad"
           >
             <van-cell
-              v-for="item in list"
-              :key="item"
-              :title="item"
+              v-for="articleItem in channelItem.articles"
+              :key="articleItem.art_id"
+              :title="articleItem.title"
             />
           </van-list>
         </van-pull-refresh>
@@ -45,6 +45,7 @@
 
 <script>
 import { getUserChannels } from '@/api/channel'
+import { getArticles } from '@/api/article'
 export default {
   name: 'HomeIndex',
   data () {
@@ -57,38 +58,18 @@ export default {
       channels: [] // 存储频道列表
     }
   },
+  computed: {
+    /**
+    * 当前激活的频道
+    */
+    activeChannel () {
+      return this.channels[this.activeChannelIndex]
+    }
+  },
   created () {
     this.loadChannels()
   },
   methods: {
-    /**
-     * 上拉加载更多，push 数据
-     */
-    onLoad () {
-      // console.log('onload')
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        // 加载状态结束
-        this.loading = false
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
-      }, 1000)
-    },
-    /**
-     * 下拉刷新，如果有新数据，则是重置列表数据
-     */
-    onRefresh () {
-      // console.log('onRefresh')
-      setTimeout(() => {
-        this.isLoading = false
-      }, 500)
-    },
     async loadChannels () {
       const { user } = this.$store.state
       let channels = []
@@ -96,7 +77,7 @@ export default {
       // 已登录
       if (user) {
         const data = await getUserChannels()
-        console.log(data)
+        // console.log(data)
         channels = data.channels
       } else {
         // 未登录
@@ -108,18 +89,77 @@ export default {
         } else {
           // 如果没有本地存储频道数据则请求获取默认推荐频道列表
           const data = await getUserChannels()
-          console.log(data)
+          // console.log(data)
           channels = data.channels
         }
       }
       // 修改 channels，将这个数据结构修改为满足我们使用的需求
       channels.forEach(item => {
         item.articles = []
+        item.timestamp = Date.now() // 存储下一页数据的时间戳
         item.downPullLoading = false // 控制当前频道的下拉刷新 loading 状态
         item.upPullLoading = false // 控制当前频道的上拉加载更多的 loading 状态
         item.upPullFinished = false // 控制当前频道数据是否加载完毕
       })
       this.channels = channels
+    },
+    /**
+     * 上拉加载更多，push 数据
+     */
+    async onLoad () {
+      console.log('onload')
+      let data = []
+      data = await this.loadArticles()
+      // pre_timestamp 下一页的页码
+      // results 文章列表
+      // console.log(data)
+
+      // 没有最新数据，那就加载上一次推荐数据
+      if (data.pre_timestamp && !data.results.length) {
+        this.activeChannel.timestamp = data.pre_timestamp
+        // 加载下一页数据
+        data = await this.loadArticles()
+      }
+      // 数据加载好以后，将pre_timestamp更新到当前频道中用于加载下下页数据
+      this.activeChannel.timestamp = data.pre_timestamp
+      // 将文章数据更新到频道中(注意：是push追加，不是覆盖)
+      this.activeChannel.articles.push(...data.results)
+
+      // 数据加载完毕，取消上拉loading
+      this.activeChannel.upPullLoading = false
+
+      console.log(data)
+      // 异步更新数据
+      // setTimeout(() => {
+      //   for (let i = 0; i < 10; i++) {
+      //     this.list.push(this.list.length + 1)
+      //   }
+      //   // 加载状态结束
+      //   this.loading = false
+
+      //   // 数据全部加载完成
+      //   if (this.list.length >= 40) {
+      //     this.finished = true
+      //   }
+      // }, 1000)
+    },
+    /**
+     * 下拉刷新，如果有新数据，则是重置列表数据
+     */
+    onRefresh () {
+      // console.log('onRefresh')
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
+    },
+    async loadArticles () {
+      const { id: channelId, timestamp } = this.activeChannel
+      const data = await getArticles({
+        channelId, // 当前激活频道id
+        timestamp, // 当前频道下一页数据的时间戳
+        withTop: 1 // 是否包含置顶数据
+      })
+      return data
     }
   }
 }
