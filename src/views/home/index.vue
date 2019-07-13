@@ -24,7 +24,7 @@
           @refresh="onRefresh"
           :success-text="channelItem.downPullSuccessText"
           :success-duration="1000"
-          >
+        >
           <!--
           列表组件：主要提供上拉加载更多的功能
           loading 用来控制加载中 loading 状态
@@ -54,7 +54,10 @@
         v-bind:value="数据"
         v-on:input="数据 = $event"
      -->
-    <HomeChannel v-model="isChannelShow"/>
+    <HomeChannel
+      v-model="isChannelShow"
+      :channels = "channels"
+      :active-index="activeChannelIndex" />
     <!-- 频道管理组件 -->
   </div>
 </template>
@@ -72,7 +75,7 @@ export default {
     return {
       activeChannelIndex: 0,
       channels: [], // 存储频道列表
-      isChannelShow: false
+      isChannelShow: true
     }
   },
   computed: {
