@@ -170,7 +170,7 @@ export default {
       // 数据加载完毕，取消上拉loading
       this.activeChannel.upPullLoading = false
 
-      console.log(data)
+      // console.log(data)
     },
     /**
      * 下拉刷新，如果有新数据，则是重置列表数据
