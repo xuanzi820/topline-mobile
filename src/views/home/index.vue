@@ -104,36 +104,36 @@ export default {
   methods: {
     async loadChannels () {
       const { user } = this.$store.state
-      let channels1 = []
+      let channels = []
 
       // 已登录
       if (user) {
         const data = await getUserChannels()
         // console.log(data)
-        channels1 = data.channels
+        channels = data.channels
       } else {
         // 未登录
 
         // 如果有本地存储数据则使用本地存储中的频道列表
-        const localChannels = window.localStorage.getItem('channels')
+        const localChannels = JSON.parse(window.localStorage.getItem('channels'))
         if (localChannels) {
-          channels1 = localChannels
+          channels = localChannels
         } else {
           // 如果没有本地存储频道数据则请求获取默认推荐频道列表
           const data = await getUserChannels()
           // console.log(data)
-          channels1 = data.channels
+          channels = data.channels
         }
       }
       // 修改 channels，将这个数据结构修改为满足我们使用的需求
-      channels1.forEach(item => {
+      channels.forEach(item => {
         item.articles = []
         item.timestamp = Date.now() // 存储下一页数据的时间戳
         item.downPullLoading = false // 控制当前频道的下拉刷新 loading 状态
         item.upPullLoading = false // 控制当前频道的上拉加载更多的 loading 状态
         item.upPullFinished = false // 控制当前频道数据是否加载完毕
       })
-      this.channels = channels1
+      this.channels = channels
     },
     /**
      * 上拉加载更多，push 数据
