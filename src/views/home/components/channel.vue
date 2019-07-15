@@ -19,18 +19,21 @@
             type="danger"
             plain
             size="mini"
-          >编辑</van-button>
+            @click="isEdit = !isEdit"
+          >{{isEdit ? '完成' : '编辑'}}</van-button>
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
         <van-grid-item
-          v-for="item in userChannels"
+          v-for="(item, index) in userChannels"
           :key="item.id"
-          text="文字">
+          @click="handleUserChannelClick(item, index)"
+          >
           <span
             class="text"
+            :class="{ active: index===activeIndex && !isEdit }"
             >{{item.name}}</span>
-          <!-- <van-icon class="close-icon" name="close" /> -->
+          <van-icon class="close-icon" name="close" v-show="isEdit" />
         </van-grid-item>
       </van-grid>
     </div>
@@ -80,7 +83,8 @@ export default {
   },
   data () {
     return {
-      allChannels: [] // 所有的频道列表
+      allChannels: [], // 所有的频道列表
+      isEdit: false
     }
   },
   computed: {
@@ -89,7 +93,7 @@ export default {
      * 计算属性会监视内部依赖的实例中的成员，当数据发生改变，它会重新调用计算
      */
     recommendChannels () {
-      // console.log('recommendChannels called')
+      console.log('recommendChannels called')
       // 从用户频道列表中映射一个数组，数组中存储了所有的用户频道 id
       const duplicates = this.userChannels.map(item => item.id)
       // this.allChannels.filter(item => 不属于用户频道的item)
@@ -117,6 +121,34 @@ export default {
       }
       // 如果未登录，则将数据持久化到本地存储
       window.localStorage.setItem('channels', JSON.stringify(this.userChannels))
+    },
+    changeChannel (item, index) {
+      // console.log('changeChannel')
+      this.$emit('update:active-index', index)
+      this.$emit('input', false)
+    },
+    deleteChannel (item, index) {
+      // console.log('deleteChannel')
+      this.userChannels.splice(index, 1)
+      // TODO: 删除当前频道，下一个激活的频道没有数据的问题
+      // 手动的设置一下当前激活的标签索引，用来触发那个onload调用，否则可能会看不到那个数据
+      // this.$emit('update:active-index', 1)
+      // 判断当前激活频道中是否有数据，如果没有则手动的onload一下
+      if (this.user) {
+        // 登录，发请求删除
+        return
+      }
+      // 未登录。删除本地存储的数据
+      window.localStorage.setItem('channels', JSON.stringify(this.userChannels))
+    },
+    handleUserChannelClick (item, index) {
+      if (!this.isEdit) {
+        // 非编辑状态，切换频道
+        this.changeChannel(item, index)
+      } else {
+        // 编辑状态，删除频道
+        this.deleteChannel(item, index)
+      }
     }
   }
 }
