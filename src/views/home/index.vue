@@ -111,16 +111,16 @@ export default {
       // 频道数据改变，重新加载当前激活频道的数据
       // 只需将上拉加载更多设置为 true，它就会自动去调用 onLoad 请求函数
       this.activeChannel.upPullLoading = true
-    },
-    isChannelShow () {
-      console.log(this.isChannelShow, this.activeChannel.articles)
-      // 如果频道面板隐藏了，并且当前频道没有数据，那我们就手动的 onLoad 加载更多
-      if (!this.isChannelShow && !this.activeChannel.articles.length) {
-        console.log('onload')
-        this.activeChannel.upPullLoading = true
-        this.onload()
-      }
     }
+    // isChannelShow () {
+    //   console.log(this.isChannelShow, this.activeChannel.articles)
+    //   // 如果频道面板隐藏了，并且当前频道没有数据，那我们就手动的 onLoad 加载更多
+    //   if (!this.isChannelShow && !this.activeChannel.articles.length) {
+    //     console.log('onload')
+    //     this.activeChannel.upPullLoading = true
+    //     this.onload()
+    //   }
+    // }
   },
   created () {
     this.loadChannels()
