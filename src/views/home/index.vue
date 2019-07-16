@@ -56,11 +56,11 @@
                   </van-grid>
                 </template>
                 <p>
-                  <span>{{articleItem.aut_name}}</span>
+                  <span>{{ articleItem.aut_name }}</span>
                   &nbsp;
-                  <span>{{articleItem.comm_count}}评论</span>
+                  <span>{{ articleItem.comm_count }}评论</span>
                   &nbsp;
-                  <span>{{articleItem.pubdate}}</span>
+                  <span>{{ articleItem.pubdate | relativeTime }}</span>
                 </p>
               </div>
             </van-cell>
