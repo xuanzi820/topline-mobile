@@ -63,7 +63,11 @@
 </template>
 
 <script>
-import { getAllChannels, deleteUserChannel } from '@/api/channel'
+import {
+  getAllChannels,
+  deleteUserChannel,
+  resetUserChannels
+} from '@/api/channel'
 import { mapState } from 'vuex'
 export default {
   name: 'HomeChannel',
@@ -93,7 +97,7 @@ export default {
      * 计算属性会监视内部依赖的实例中的成员，当数据发生改变，它会重新调用计算
      */
     recommendChannels () {
-      console.log('recommendChannels called')
+      // console.log('recommendChannels called')
       // 从用户频道列表中映射一个数组，数组中存储了所有的用户频道 id
       const duplicates = this.userChannels.map(item => item.id)
       // this.allChannels.filter(item => 不属于用户频道的item)
@@ -118,12 +122,20 @@ export default {
       })
       this.allChannels = data.channels
     },
-    handleAddChannel (item) {
+    async handleAddChannel (item) {
       // 将点击添加的频道添加到用户频道中
       this.userChannels.push(item)
       // 持久化：
       if (this.user) {
         // 如果用户已登录，则将数据请求添加到后端
+        const data = this.userChannels.slice(1).map((item, index) => {
+          return {
+            id: item.id, // 频道id
+            seq: index + 2
+          }
+        })
+        // console.log(data)
+        await resetUserChannels(data)
         return
       }
       // 如果未登录，则将数据持久化到本地存储
