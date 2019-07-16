@@ -69,8 +69,9 @@
                       全局过滤器，Vue.filter(...)，任何组件都可以使用
                     什么情况下建议使用过滤器？一般都是一些简单的文本格式操作。
                    -->
-                  <span>{{ relativeTime(articleItem.pubdate) }}</span>
+                  <!-- <span>{{ relativeTime(articleItem.pubdate) }}</span> -->
                   <span>{{ articleItem.pubdate | relativeTime }}</span>
+                  <van-icon class="close" name="close" @click="isMoreActionShow=true"/>
                 </p>
               </div>
             </van-cell>
@@ -104,6 +105,9 @@
       :active-index.sync="activeChannelIndex"
       />
     <!-- 频道管理组件 -->
+    <!-- 更多操作 -->
+    <more-action v-model="isMoreActionShow"/>
+    <!-- /更多操作 -->
   </div>
 </template>
 
@@ -111,16 +115,19 @@
 import { getUserChannels } from '@/api/channel'
 import { getArticles } from '@/api/article'
 import HomeChannel from './components/channel'
+import MoreAction from './components/more-action'
 export default {
   name: 'HomeIndex',
   components: {
-    HomeChannel
+    HomeChannel,
+    MoreAction
   },
   data () {
     return {
       activeChannelIndex: 0,
       channels: [], // 存储频道列表
-      isChannelShow: false
+      isChannelShow: false,
+      isMoreActionShow: false
     }
   },
   // 局部过滤器只能在当前组件使用
@@ -290,5 +297,9 @@ export default {
 .channel-tabs /deep/ .wap-nav {
   position: fixed;
   right: 0;
+}
+.channel-tabs .close {
+  float: right;
+  font-size: 30px
 }
 </style>
