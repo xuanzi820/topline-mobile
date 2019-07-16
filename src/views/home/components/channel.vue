@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import { getAllChannels, deleteUserChannel } from '@/api/channel'
 import { mapState } from 'vuex'
 export default {
   name: 'HomeChannel',
@@ -134,7 +134,7 @@ export default {
       this.$emit('update:active-index', index)
       this.$emit('input', false)
     },
-    deleteChannel (item, index) {
+    async deleteChannel (item, index) {
       // console.log('deleteChannel')
       this.userChannels.splice(index, 1)
       // TODO: 删除当前频道，下一个激活的频道没有数据的问题
@@ -143,6 +143,7 @@ export default {
       // 判断当前激活频道中是否有数据，如果没有则手动的onload一下
       if (this.user) {
         // 登录，发请求删除
+        await deleteUserChannel(item.id)
         return
       }
       // 未登录。删除本地存储的数据
