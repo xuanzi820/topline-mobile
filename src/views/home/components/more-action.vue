@@ -13,10 +13,10 @@
 
     <v-cell-group v-else>
       <van-cell icon="arrow-left"/>
-      <van-cell  icon="location-o" title="拉黑作者" />
-      <van-cell  icon="location-o" title="拉黑作者" />
-      <van-cell  icon="location-o" title="拉黑作者" />
-      <van-cell  icon="location-o" title="拉黑作者" />
+      <van-cell icon="location-o" title="拉黑作者" />
+      <van-cell icon="location-o" title="拉黑作者" />
+      <van-cell icon="location-o" title="拉黑作者" />
+      <van-cell icon="location-o" title="拉黑作者" />
     </v-cell-group>
   </van-dialog>
 </template>
