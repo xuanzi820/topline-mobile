@@ -71,7 +71,7 @@
                    -->
                   <!-- <span>{{ relativeTime(articleItem.pubdate) }}</span> -->
                   <span>{{ articleItem.pubdate | relativeTime }}</span>
-                  <van-icon class="close" name="close" @click="isMoreActionShow=true"/>
+                  <van-icon class="close" name="close" @click="handleShowMoreAction(articleItem)"/>
                 </p>
               </div>
             </van-cell>
@@ -106,7 +106,10 @@
       />
     <!-- 频道管理组件 -->
     <!-- 更多操作 -->
-    <more-action v-model="isMoreActionShow"/>
+    <more-action
+      v-model="isMoreActionShow"
+      :current-article="currentArticle"
+    />
     <!-- /更多操作 -->
   </div>
 </template>
@@ -127,7 +130,8 @@ export default {
       activeChannelIndex: 0,
       channels: [], // 存储频道列表
       isChannelShow: false,
-      isMoreActionShow: false
+      isMoreActionShow: false,
+      currentArticle: null
     }
   },
   // 局部过滤器只能在当前组件使用
@@ -276,6 +280,13 @@ export default {
         withTop: 1 // 是否包含置顶数据
       })
       return data
+    },
+    handleShowMoreAction (article) {
+      // 将执行更多操作的文章记录下来
+      console.log(article)
+      this.currentArticle = article
+      // 显示更多操作的弹框
+      this.isMoreActionShow = true
     }
   }
 }
